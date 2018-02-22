@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    
-    <string name="app_name" translatable="false">PageTurner</string>
-    
+    <string name="app_name" translatable="false">eBuki Textbooks</string>
+
     <string name="title">Title</string>
-    <string name="app_desc">PageTurner is a syncing e-book reader that allows you to sync your reading progress over multiple devices.</string>
+    <string name="app_desc">eBuki Textbook Reader</string>
     <string name="browse">Browse…</string>
     <string name="open_file">Open ePub file</string>
-    <string name="open_library">My Books</string>
+    <string name="open_library">My Text Books</string>
     <string name="profile_day">Switch to day mode</string>
     <string name="profile_night">Switch to night mode</string>
     <string name="manual_sync">Sync reading progress</string>
     <string name="prefs">Settings</string>
     <string name="show_toc">Show TOC</string>
     <string name="rolling_blind">Auto-scroll</string>
-    <string name="about">About PageTurner</string>
+    <string name="about">About eBuki Textbooks</string>
     <string name="about_gpl">PageTurner is free software under the GPL v3.</string>
     <string name="error_open_bk">Error opening book: %s</string>
     <string name="dictionary_lookup">Look up in Dictionary</string>
@@ -36,7 +35,7 @@
     <string name="last_read">Last read: %s</string>
     <string name="added_to_lib">Added to library: %s</string>
     <string name="view_details">View details</string>
-    <string name="delete">Delete</string>
+    <string name="delete">Delete *</string>
     <string name="scan_books">Scan for books</string>
     <string name="importing_books">Importing books…</string>
     <string name="scanning_epub">Scanning for EPUB files.</string>
@@ -76,7 +75,7 @@
         <item>Top buttons move forward</item>
         <item>Bottom buttons move forward</item>
     </string-array>
-        
+
     <string-array name="libraryQueries">
         <item>Most recently read books</item>
         <item>Most recently added books</item>
@@ -84,7 +83,7 @@
         <item>All books by title</item>
         <item>All books by author</item>
     </string-array>
- 
+
 
     <string name="access_denied">Your access-key is invalid. Please visit pageturner-reader.org to obtain a valid access key.</string>
     <string name="import_books">Import Books</string>
@@ -128,22 +127,22 @@
     <string name="c2opds_server">Calibre2OPDS</string>
     <string name="generic_server">Generic OPDS site</string>
     <string name="save">Save changes</string>
-    
+
     <string name="custom_site_desc">Your own OPDS / Calibre sites. You can add sites from the Preferences screen.</string>
     <string name="site_name">Site name</string>
     <string name="site_url">Site URL</string>
     <string name="site_desc">Description</string>
     <string name="site_username">Username</string>
     <string name="site_password">Password</string>
-    
+
     <string name="msg_name_blank">Please fill in a name.</string>
     <string name="msg_url_blank">Please fill in a URL.</string>
-    
+
     <string name="edit">Edit</string>
-    
+
     <string name="no_custom_sites">You don\'t have any custom sites defined. Please add some in the preferences.</string>
-    <string name="text_to_speech">Read out loud (TTS)</string>    
-    
+    <string name="text_to_speech">Read out loud (TTS)</string>
+
     <string name="init_tts">Initializing TTS…\nPlease wait.</string>
     <string name="tts_failed">TTS Failed.</string>
 
@@ -285,32 +284,32 @@
     <string name="pref_nook_touch">Nook Touch Preferences</string>
    <string name="pref_nook_touch_button_nav">Button Navigation</string>
    <string name="pref_nook_touch_button_nav_summary">How should the buttons on the side of the Nook turn the page?</string>
-    
+
     <string name="pref_reading_direction">Reading direction</string>
     <string name="pref_reading_direction_summary">Read left to right or right to left (Hebrew and Arabic)</string>
-       
+
     <string-array name="reading_directionsLabels">
         <item>Left to right</item>
-        <item>Right to left</item>        
-    </string-array>    
-    
+        <item>Right to left</item>
+    </string-array>
+
     <string name="pref_manage_sites">Manage OPDS / Calibre Catalogs</string>
     <string name="pref_manage_sites_summary">Add and remove custom online catalogs and Calibre servers.</string>
 
-    
+
     <string name="pref_serif_font">Serif font</string>
     <string name="pref_serif_summary">Font to use if a book requests a Serif font.</string>
-   
+
     <string name="pref_sans_serif_font">Sans-Serif font</string>
-    <string name="pref_sans_serif_summary">Font to use if a book requests a Sans-Serif font.</string>   
-    
+    <string name="pref_sans_serif_summary">Font to use if a book requests a Sans-Serif font.</string>
+
     <string name="pref_lang">UI Language</string>
     <string name="pref_lang_summary">Allows you to switch PageTurner\'s language settings.</string>
     <string name="language_switch_message">The new language setting will become active the next time you open a book.</string>
 
     <string name="pref_accept_self_signed">Accept self-signed certificates</string>
     <string name="pref_accept_self_signed_summary">Allows you to connect to OPDS sites which use self-signed certificates.</string>
-    
+
     <string-array name="supported_languagesLabels">
  	    <item>Use device setting</item>
  	    <item>English</item>
@@ -318,7 +317,7 @@
  	    <item>German</item>
  	    <item>Spanish</item>
  	    <item>Italian</item>
- 	    <item>Arabic</item> 	    
+ 	    <item>Arabic</item>
  	    <item>Hebrew</item>
  	    <item>Farsi</item>
  	    <item>Slovene</item>
@@ -376,6 +375,6 @@
     <string name="default_book_title" translatable="false">Title of the book</string>
     <string name="hello_world" translatable="false">Hello world!</string>
 
-    
+
 
 </resources>
