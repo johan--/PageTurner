@@ -80,33 +80,33 @@ import static net.nightwhistler.pageturner.PlatformUtil.isIntentAvailable;
 public class LibraryFragment extends RoboSherlockFragment implements ImportCallback {
 
     protected static final int REQUEST_CODE_GET_CONTENT = 2;
-	
-	@Inject 
+
+	@Inject
 	private LibraryService libraryService;
 
     @Inject
     private DialogFactory dialogFactory;
-	
+
 	@InjectView(R.id.libraryList)
 	private ListView listView;
-	
+
 	@InjectView(R.id.bookCaseView)
 	private BookCaseView bookCaseView;
-		
+
 	@InjectView(R.id.alphabetList)
 	private ListView alphabetBar;
-	
+
 	private AlphabetAdapter alphabetAdapter;
-	
+
 	@InjectView(R.id.alphabetDivider)
 	private ImageView alphabetDivider;
-	
+
 	@InjectView(R.id.libHolder)
 	private ViewSwitcher switcher;
 
     @Inject
     private Context context;
-	
+
 	@Inject
 	private Configuration config;
 
@@ -115,20 +115,20 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 
 	private Drawable backupCover;
 	private Handler handler;
-		
+
 	private KeyedResultAdapter bookAdapter;
-		
+
 	private static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.LONG);
 	private static final int ALPHABET_THRESHOLD = 20;
-	
+
 	private ProgressDialog waitDialog;
-	private ProgressDialog importDialog;	
-	
+	private ProgressDialog importDialog;
+
 	private AlertDialog importQuestion;
-	
+
 	private boolean askedUserToImport;
 	private boolean oldKeepScreenOn;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger("LibraryActivity");
 
 	private IntentCallBack intentCallBack;
@@ -140,18 +140,18 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 	private interface IntentCallBack {
 		void onResult( int resultCode, Intent data );
 	}
-	
+
 	@Override
-	public void onCreate(Bundle savedInstanceState) {			
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
         LOG.debug("onCreate()");
-		
+
 		Bitmap backupBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.unknown_cover );
 		this.backupCover = new FastBitmapDrawable(backupBitmap);
-		
+
 		this.handler = new Handler();
-				
+
 		if ( savedInstanceState != null ) {
 			this.askedUserToImport = savedInstanceState.getBoolean("import_q", false);
 		}
@@ -170,33 +170,33 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 		setHasOptionsMenu(true);
 		this.bookCaseView.setOnScrollListener( new CoverScrollListener() );
 		this.listView.setOnScrollListener( new CoverScrollListener() );
-		
+
 		if ( config.getLibraryView() == LibraryView.BOOKCASE ) {
-			
+
 			this.bookAdapter = new BookCaseAdapter();
-			this.bookCaseView.setAdapter(bookAdapter);			
-			
+			this.bookCaseView.setAdapter(bookAdapter);
+
 			if ( switcher.getDisplayedChild() == 0 ) {
 				switcher.showNext();
 			}
-		} else {		
+		} else {
 			this.bookAdapter = new BookListAdapter(context);
 			this.listView.setAdapter(bookAdapter);
 		}
 
 		this.waitDialog = new ProgressDialog(context);
 		this.waitDialog.setOwnerActivity(getActivity());
-		
+
 		this.importDialog = new ProgressDialog(context);
-		
+
 		this.importDialog.setOwnerActivity(getActivity());
 		importDialog.setTitle(R.string.importing_books);
 		importDialog.setMessage(getString(R.string.scanning_epub));
-		registerForContextMenu(this.listView);	
+		registerForContextMenu(this.listView);
 
         this.listView.setOnItemClickListener( this::onItemClick );
 		this.listView.setOnItemLongClickListener(this::onItemLongClick );
-		
+
 		setAlphabetBarVisible(false);
 	}
 
@@ -257,7 +257,7 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
         } else {
             this.bookAdapter.getResultAt( position ).forEach( this::openBook );
         }
-	}	
+	}
 
 	private boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
@@ -287,20 +287,20 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
             return none();
         }
 	}
-	
+
 	private void showBookDetails( final LibraryBook libraryBook ) {
 
         if ( ! isAdded() || libraryBook == null ) {
             return;
         }
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.book_details);
 		LayoutInflater inflater = PlatformUtil.getLayoutInflater(getActivity());
-		
+
 		View layout = inflater.inflate(R.layout.book_details, null);
 		builder.setView( layout );
-		
+
 		ImageView coverView = (ImageView) layout.findViewById(R.id.coverImage );
 
 		if ( libraryBook.getCoverImage() != null ) {
@@ -316,13 +316,14 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 		TextView added = (TextView) layout.findViewById(R.id.addedToLibrary);
 		TextView descriptionView = (TextView) layout.findViewById(R.id.bookDescription);
 		TextView fileName = (TextView) layout.findViewById(R.id.fileName);
-		
+
 		titleView.setText(libraryBook.getTitle());
 		String authorText = String.format( getString(R.string.book_by),
-				 libraryBook.getAuthor().getFirstName() + " " 
+				 libraryBook.getAuthor().getFirstName() + " "
 				 + libraryBook.getAuthor().getLastName() );
 		authorView.setText( authorText );
-		fileName.setText( libraryBook.getFileName() );
+
+    fileName.setText( libraryBook.getFileName() );
 
 		if (libraryBook.getLastRead() != null && ! libraryBook.getLastRead().equals(new Date(0))) {
 			String lastReadText = String.format(getString(R.string.last_read),
@@ -342,33 +343,33 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 
 		descriptionView.setText(spanner.fromHtml( libraryBook.getDescription()));
 
-        builder.setNeutralButton(R.string.delete, (dialog, which) -> {
-            libraryService.deleteBook( libraryBook.getFileName() );
-            refreshView();
-            dialog.dismiss();
-        });
-		
+    // builder.setNeutralButton(R.string.delete, (dialog, which) -> {
+    //     libraryService.deleteBook( libraryBook.getFileName() );
+    //     refreshView();
+    //     dialog.dismiss();
+    // });
+
 		builder.setNegativeButton(android.R.string.cancel, null);
 		builder.setPositiveButton(R.string.read, (dialog, which) -> openBook(libraryBook) );
 
 		builder.show();
 	}
-	
+
 	private void openBook(LibraryBook libraryBook) {
 		Intent intent = new Intent(getActivity(), ReadingActivity.class);
         config.setLastActivity( ReadingActivity.class );
 
 		intent.setData( Uri.parse(libraryBook.getFileName()));
 		getActivity().setResult(Activity.RESULT_OK, intent);
-				
-		getActivity().startActivityIfNeeded(intent, 99);		
+
+		getActivity().startActivityIfNeeded(intent, 99);
 	}
-		
-	private void startImport(File startFolder, boolean copy) {		
+
+	private void startImport(File startFolder, boolean copy) {
 		ImportTask importTask = new ImportTask(context, libraryService, this, config, copy, false);
 		importDialog.setOnCancelListener(importTask);
-		importDialog.show();		
-				
+		importDialog.show();
+
 		this.oldKeepScreenOn = listView.getKeepScreenOn();
 		listView.setKeepScreenOn(true);
 
@@ -382,9 +383,9 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 			this.intentCallBack.onResult(resultCode, data);
 		}
 	}
-	
+
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {		
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.library_menu, menu);
 
         UiUtils.Action toggleListener = () -> {
@@ -483,7 +484,7 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
             this.taskQueue.jumpQueueExecuteTask(new LoadBooksTask(config.getLastLibraryQuery(), query));
         }
     }
-	
+
 	private void switchToColourProfile( ColourProfile profile ) {
 		config.setColourProfile(profile);
 		Intent intent = new Intent(getActivity(), LibraryActivity.class);
@@ -491,26 +492,26 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 		onStop();
 		getActivity().finish();
 	}
-	
+
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		boolean bookCaseActive = config.getLibraryView() == LibraryView.BOOKCASE;
-		
+
 		menu.findItem(R.id.shelves_view).setVisible(! bookCaseActive);
 		menu.findItem(R.id.list_view).setVisible(bookCaseActive);
 		menu.findItem(R.id.profile_day).setVisible(config.getColourProfile() == ColourProfile.NIGHT);
 		menu.findItem(R.id.profile_night).setVisible(config.getColourProfile() == ColourProfile.DAY);
 	}
-	
+
 	private void showImportDialog() {
-		AlertDialog.Builder builder;		
-		
+		AlertDialog.Builder builder;
+
 		LayoutInflater inflater = PlatformUtil.getLayoutInflater(getActivity());
 		final View layout = inflater.inflate(R.layout.import_dialog, null);
 		final RadioButton scanSpecific = (RadioButton) layout.findViewById(R.id.radioScanFolder);
 		final RadioGroup scanRadioGroup = (RadioGroup) layout.findViewById(R.id.radioScanGroup);
 		final TextView folder = (TextView) layout.findViewById(R.id.folderToScan);
-		final CheckBox copyToLibrary = (CheckBox) layout.findViewById(R.id.copyToLib);		
+		final CheckBox copyToLibrary = (CheckBox) layout.findViewById(R.id.copyToLib);
 		final Button browseButton = (Button) layout.findViewById(R.id.browseButton);
 
 		Option<File> storageBase = config.getStorageBase();
@@ -544,13 +545,13 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
                 folder.setText(data.getData().getPath());
             }
         };
-		
+
 		browseButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), FileBrowseActivity.class);
             intent.setData( Uri.parse(folder.getText().toString() ));
             startActivityForResult(intent, 0);
         });
-		
+
 		builder.setTitle(R.string.import_books);
 
         builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
@@ -574,48 +575,48 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
         });
 
 		builder.setNegativeButton(android.R.string.cancel, null);
-		
+
 		builder.show();
-	}	
-	
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putBoolean("import_q", askedUserToImport);
 	}
-	
+
 	@Override
 	public void onStop() {
-		this.libraryService.close();	
+		this.libraryService.close();
 		this.waitDialog.dismiss();
 		this.importDialog.dismiss();
 		super.onStop();
 	}
-	
+
 	public void onBackPressed() {
-		getActivity().finish();			
-	}	
-	
+		getActivity().finish();
+	}
+
 	@Override
 	public void onPause() {
-		
+
 		this.bookAdapter.clear();
 		//We clear the list to free up memory.
 
         this.taskQueue.clear();
 		this.clearCoverCache();
-		
+
 		super.onPause();
 	}
-	
-	
+
+
 	@Override
 	public void onResume() {
-		super.onResume();				
-		
+		super.onResume();
+
 		LibrarySelection lastSelection = config.getLastLibraryQuery();
-		
+
 		ActionBar actionBar = getSherlockActivity().getSupportActionBar();
-		
+
 		if (actionBar.getSelectedNavigationIndex() != lastSelection.ordinal() ) {
 			actionBar.setSelectedNavigationItem(lastSelection.ordinal());
 		} else {
@@ -698,17 +699,17 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
         }
 
     }
-	
-	
+
+
 	@Override
 	public void importFailed(String reason, boolean silent) {
 
         LOG.debug("Got importFailed()");
-		
+
 		if (silent || !isAdded() || getActivity() == null ) {
 			return;
 		}
-		
+
 		importDialog.hide();
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.import_failed);
@@ -716,17 +717,17 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 		builder.setNeutralButton(android.R.string.ok, null);
 		builder.show();
 	}
-	
+
 	@Override
 	public void importStatusUpdate(String update, boolean silent) {
-		
+
 		if (silent || !isAdded() || getActivity() == null ) {
 			return;
 		}
-		
+
 		importDialog.setMessage(update);
-	}	
-	
+	}
+
 	public void onAlphabetBarClick( KeyedQueryResult<LibraryBook> result, Character c ) {
 
 		result.getOffsetFor(toUpperCase(c)).forEach( index -> {
@@ -740,65 +741,65 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 				this.listView.setSelection(index);
 			}
 		});
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Based on example found here:
 	 * http://www.vogella.de/articles/AndroidListView/article.html
-	 * 
+	 *
 	 * @author work
 	 *
 	 */
-	private class BookListAdapter extends KeyedResultAdapter {	
-		
-		private Context context;		
-		
+	private class BookListAdapter extends KeyedResultAdapter {
+
+		private Context context;
+
 		public BookListAdapter(Context context) {
 			this.context = context;
-		}		
-		
+		}
+
 		@Override
 		public View getView(int index, final LibraryBook book, View convertView,
 				ViewGroup parent) {
-			
+
 			View rowView;
-			
-			if ( convertView == null ) {			
+
+			if ( convertView == null ) {
 				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				rowView = inflater.inflate(R.layout.book_row, parent, false);
 			} else {
 				rowView = convertView;
-			}			
-			
+			}
+
 			TextView titleView = (TextView) rowView.findViewById(R.id.bookTitle);
 			TextView authorView = (TextView) rowView.findViewById(R.id.bookAuthor);
 			TextView dateView = (TextView) rowView.findViewById(R.id.addedToLibrary);
 			TextView progressView = (TextView) rowView.findViewById(R.id.readingProgress);
-			
+
 			final ImageView imageView = (ImageView) rowView.findViewById(R.id.bookCover);
-						
+
 			String authorText = String.format(getString(R.string.book_by),
 					book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() );
-			
+
 			authorView.setText(authorText);
 			titleView.setText(book.getTitle());
-			
+
 			if ( book.getProgress() > 0 ) {
 				progressView.setText( "" + book.getProgress() + "%");
 			} else {
 				progressView.setText("");
-			}			
-			
+			}
+
 			String dateText = String.format(getString(R.string.added_to_lib),
 					DATE_FORMAT.format(book.getAddedToLibrary()));
 			dateView.setText( dateText );
-			
-			loadCover(imageView, book, index);			
-			
+
+			loadCover(imageView, book, index);
+
 			return rowView;
-		}	
-	
+		}
+
 	}
 
     private void loadView( LibrarySelection selection, String from ) {
@@ -829,21 +830,21 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 
     private void loadCover( ImageView imageView, LibraryBook book, int index ) {
 		Drawable draw = coverCache.get(book.getFileName());
-		
+
 		if ( draw != null ) {
 			imageView.setImageDrawable(draw);
 		} else {
-			
+
 			imageView.setImageDrawable(backupCover);
-			
-			if ( book.getCoverImage() != null ) {				
+
+			if ( book.getCoverImage() != null ) {
 				callbacks.add( new CoverCallback(book, index, imageView ) );
 			}
 		}
-	}	
-	
+	}
+
 	private class CoverScrollListener implements AbsListView.OnScrollListener {
-		
+
 		private Runnable lastRunnable;
 		private Character lastCharacter;
 
@@ -856,15 +857,15 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
                 //leave it null
             }
         }
-		
+
 		@Override
 		public void onScroll(AbsListView view, final int firstVisibleItem,
 				final int visibleItemCount, final int totalItemCount) {
-			
+
 			if ( visibleItemCount == 0  ) {
 				return;
 			}
-			
+
 			if ( this.lastRunnable != null ) {
 				handler.removeCallbacks(lastRunnable);
 			}
@@ -916,13 +917,13 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
                 }
 
             };
-				
-			handler.postDelayed(lastRunnable, 550);			
+
+			handler.postDelayed(lastRunnable, 550);
 		}
-		
+
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
-					
+
 		}
 
 	}
@@ -949,45 +950,45 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 
 
 	private class BookCaseAdapter extends KeyedResultAdapter {
-				
+
 		@Override
 		public View getView(final int index, final LibraryBook object, View convertView,
 				ViewGroup parent) {
-			
+
 			View result;
-		
-			if ( convertView == null ) {				
+
+			if ( convertView == null ) {
 				LayoutInflater inflater = PlatformUtil.getLayoutInflater(getActivity());
 				result = inflater.inflate(R.layout.bookcase_row, parent, false);
-				
+
 			} else {
 				result = convertView;
-			}			
-			
+			}
+
 			result.setTag(index);
-			
+
 			result.setOnClickListener( v -> LibraryFragment.this.onItemClick(null, null, index, 0) );
 			result.setOnLongClickListener( v -> LibraryFragment.this.onItemLongClick(null, null, index, 0));
-			
+
 			final ImageView image = (ImageView) result.findViewById(R.id.bookCover);
 			image.setImageDrawable(backupCover);
 			TextView text = (TextView) result.findViewById(R.id.bookLabel);
 			text.setText( object.getTitle() );
-			text.setBackgroundResource(R.drawable.alphabet_bar_bg_dark);			
-			
-			loadCover(image, object, index);		
-			
+			text.setBackgroundResource(R.drawable.alphabet_bar_bg_dark);
+
+			loadCover(image, object, index);
+
 			return result;
 		}
-		
+
 	}
-	
+
 	private void buildImportQuestionDialog() {
-		
+
 		if ( importQuestion != null || ! isAdded() ) {
 			return;
 		}
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.no_books_found);
 		builder.setMessage( getString(R.string.scan_bks_question) );
@@ -1004,13 +1005,13 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 
         this.importQuestion = builder.create();
 	}
-	
+
 	private void setAlphabetBarVisible( boolean visible ) {
-		
-		int vis = visible ? View.VISIBLE : View.GONE; 
-		
+
+		int vis = visible ? View.VISIBLE : View.GONE;
+
 		alphabetBar.setVisibility(vis);
-		alphabetDivider.setVisibility(vis);		
+		alphabetDivider.setVisibility(vis);
 		listView.setFastScrollEnabled(visible);
 	}
 
@@ -1039,36 +1040,36 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
     }
 
 	private class AlphabetAdapter extends ArrayAdapter<Character> {
-		
+
 		private List<Character> data;
-		
+
 		private Character highlightChar;
-		
+
 		public AlphabetAdapter(Context context, int layout, int view, List<Character> input ) {
 			super(context, layout, view, input);
 			this.data = input;
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = super.getView(position, convertView, parent);
-			
+
 			Character tag = data.get(position);
 			view.setTag( tag );
-			
+
 			if ( tag.equals(highlightChar) ) {
 				view.setBackgroundDrawable( getResources().getDrawable(R.drawable.list_activated_holo));
 			} else {
 				view.setBackgroundDrawable(null);
 			}
-			
+
 			return view;
 		}
-		
+
 		public void setHighlightChar(Character highlightChar) {
 			this.highlightChar = highlightChar;
 		}
-		
+
 		public Character getHighlightChar() {
 			return highlightChar;
 		}
@@ -1101,7 +1102,7 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
     }
 
 	private class LoadBooksTask extends QueueableAsyncTask<String, Integer, QueryResult<LibraryBook>> {
-		
+
 		private Configuration.LibrarySelection sel;
         private String filter;
 
@@ -1120,19 +1121,19 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 			    coverCache.clear();
             }
 		}
-		
+
 		@Override
 		public Option<QueryResult<LibraryBook>> doInBackground(String... params) {
-			
+
 			Exception storedException = null;
 
             String query = this.filter;
-			
+
 			for ( int i=0; i < 3; i++ ) {
 
 				try {
 
-					switch ( sel ) {			
+					switch ( sel ) {
 					case LAST_ADDED:
 						return some(libraryService.findAllByLastAdded(query));
 					case UNREAD:
@@ -1150,9 +1151,9 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
 						//Sometimes the database is still locked.
 						Thread.sleep(1000);
 					} catch (InterruptedException in) {}
-				}				
+				}
 			}
-			
+
 			LOG.error( "Failed after 3 attempts", storedException );
             return none();
 		}
@@ -1172,6 +1173,6 @@ public class LibraryFragment extends RoboSherlockFragment implements ImportCallb
             }, () -> Toast.makeText(context, R.string.library_failed, Toast.LENGTH_SHORT).show());
 
 		}
-		
+
 	}
 }
